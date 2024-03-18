@@ -354,7 +354,7 @@ namespace C2M2
                         for (int j = 0; j < data.graphs.Length; j++)
                         {
                             var graphObj = Instantiate(graphPrefab);
-                            // CSVWriter csv = graphObj.GetComponent<CSVWriter>();
+                            
                             NDLineGraph g = graphObj.GetComponent<NDLineGraph>();
                             g.ndgraph.FocusVert = data.graphs[j].vertex;
                             g.ndgraph.simulation = sim;

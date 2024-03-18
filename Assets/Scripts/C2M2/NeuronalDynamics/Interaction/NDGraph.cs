@@ -12,14 +12,14 @@ public class NDGraph : NDInteractables
 
     private GrabRescaler grabRescaler;
     public NDLineGraph ndlinegraph;
-    public CSVWriter csv;
+    
 
     // Start is called before the first frame update
     void Awake()
     {
         grabRescaler = GetComponent<GrabRescaler>();
         ndlinegraph = GetComponent<NDLineGraph>();
-        csv = ndlinegraph.GetComponent<CSVWriter>();
+        // csv = ndlinegraph.GetComponent<CSVWriter>();
     }
 
     // Update is called once per frame
@@ -33,7 +33,7 @@ public class NDGraph : NDInteractables
 
     private void OnDestroy()
     {
-        if (csv != null)
+        if (ndlinegraph.csv != null)
         {
             ndlinegraph.csv.WriteToCSV();
         }
