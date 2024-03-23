@@ -8,6 +8,7 @@ namespace C2M2.NeuronalDynamics.Interaction.UI
 {
     [RequireComponent(typeof(NDGraph))]
     [RequireComponent(typeof(CSVWriter))]
+    
     public class NDLineGraph : LineGrapher
     {
 
@@ -29,7 +30,7 @@ namespace C2M2.NeuronalDynamics.Interaction.UI
         private void Awake()
         {
             ndgraph = GetComponent<NDGraph>();
-            csv = GetComponent<CSVWriter>();
+            csv = GetComponentInChildren<CSVWriter>();
 
         }
 

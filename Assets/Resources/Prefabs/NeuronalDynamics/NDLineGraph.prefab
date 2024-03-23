@@ -7133,7 +7133,6 @@ GameObject:
   - component: {fileID: 2168964937537411962}
   - component: {fileID: 8198696467454360633}
   - component: {fileID: 4932199581192497660}
-  - component: {fileID: 2925991384521860004}
   m_Layer: 12
   m_Name: NDLineGraph
   m_TagString: Untagged
@@ -7242,7 +7241,6 @@ MonoBehaviour:
   destroyMaterial: {fileID: 0}
   highlightObj: {fileID: 0}
   ndlinegraph: {fileID: 2168964937537411964}
-  csv: {fileID: 0}
 --- !u!114 &2168964937537411964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7366,20 +7364,6 @@ MonoBehaviour:
   resetPosition: {x: 0, y: 0, z: 0}
   resetRotation: {x: 0, y: 0, z: 0}
   moveMouseButton: 1
---- !u!114 &2925991384521860004
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2168964937537411963}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc1bb136b2b544518cfeca41d8b262b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  graphData: []
-  graph: {fileID: 0}
 --- !u!1 &2168964937591415090
 GameObject:
   m_ObjectHideFlags: 0

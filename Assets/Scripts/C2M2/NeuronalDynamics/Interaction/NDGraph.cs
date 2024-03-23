@@ -33,10 +33,13 @@ public class NDGraph : NDInteractables
 
     private void OnDestroy()
     {
+        Debug.Log("Inside on destroy");
         if (ndlinegraph.csv != null)
         {
+            Debug.Log("Should be saved");
             ndlinegraph.csv.WriteToCSV();
         }
+
         GraphManager.graphs.Remove(this);
         
         
