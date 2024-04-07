@@ -31,7 +31,7 @@ namespace C2M2.NeuronalDynamics.Interaction.UI
         {
             ndgraph = GetComponent<NDGraph>();
             csv = GetComponentInChildren<CSVWriter>();
-
+            
         }
 
         // Start is called before the first frame update

@@ -24,7 +24,7 @@ namespace C2M2.NeuronalDynamics.Interaction.UI
         {
             foreach(NDGraph graph in graphs)
             {
-                graph.ndlinegraph.DestroyPlot();
+                graph.ndlinegraph.DestroyPlot(); 
             }
         }
 

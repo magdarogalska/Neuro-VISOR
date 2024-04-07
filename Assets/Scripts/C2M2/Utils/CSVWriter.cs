@@ -4,7 +4,11 @@ using System.Diagnostics;
 using UnityEngine;
 using System.Collections.Generic;
 using C2M2.NeuronalDynamics.Interaction.UI;
-using Random = UnityEngine.Random;
+using C2M2.NeuronalDynamics.Simulation;
+using C2M2.Interaction;
+using C2M2.Simulation;
+using Debug = UnityEngine.Debug;
+
 
 
 namespace C2M2.Utils
@@ -15,50 +19,47 @@ namespace C2M2.Utils
         private string filename;
         public List<Vector3> graphData;
         public NDLineGraph graph;
-        
-        
-
-
+        public double[] cellData;
+        private SparseSolverTestv1 sim;
+        private GameManager gm = null;
         void Awake()
         {
             graph = GetComponentInParent<NDLineGraph>();
-            
-            
+            // simul = GetComponentInChildren<NDSimulation>();
 
 
-        }
+            // Debug.Log("Neuron count " + Neuron.nodes.Count);
 
-        public void AddData(Vector3 data)
-        {
-            graphData.Add(data);
+
 
         }
-        
-        
-        // public void GenerateRandomData(int count)
-        // {
-        //     graphData.Clear(); 
-        //
-        //     
-        //     for (int i = 0; i < count; i++)
-        //     {
-        //         float randomX = Random.Range(0f, 10f); 
-        //         float randomY = Random.Range(0f, 10f); 
-        //
-        //         Vector3 dataPoint = new Vector3(randomX, randomY, 0f);
-        //         graphData.Add(dataPoint);
-        //     }
-        // }
         
         //Start is called on the frame when a script is enabled just before any of the Update methods are called the first time. This function can be a coroutine.
         private void Start()
-        {
-            
+        {   gm = GameManager.instance;
+            sim = (SparseSolverTestv1)gm.activeSims[0];
+            int size = sim.Neuron.nodes.Count;
             DateTime date = DateTime.Now;
             String formatted = date.ToString("MM-dd-yyyy-hh-mm-ss");
             String fname = "/neuro_visor_recording_"+formatted+".csv";
             filename = Application.dataPath + fname;
+            TextWriter tw = new StreamWriter(filename, false);
             
+            tw.Write("Time (ms)");
+            for (int i = 0; i < size; i++)
+            {
+                tw.Write(", Vert["+i+"]");
+            }
+            tw.Close();
+            String txt_name = "/neuro_visor_recording_"+formatted+".txt";
+            String txtname = Application.dataPath + txt_name;
+            tw = new StreamWriter(txtname, false);
+            tw.WriteLine("Start of the recording: ");
+            tw.Close();
+            //write start and end time of the recording, start and end times of the neurons
+            //in the room?, the information from the indices, the neuron and vertex indices
+            //from which the data is saved from
+
 
 
         }
@@ -66,7 +67,21 @@ namespace C2M2.Utils
         private void Update()
         {
             UnityEngine.Debug.Log("Graphing vertex: "+graph.ndgraph.FocusVert);
-            graphData.Add(graph.positions[graph.ndgraph.FocusVert]);
+            cellData = sim.Get1DValues();
+            
+            // if (graphData.Count > 500)
+            // {
+            //     WriteToCSV();
+            //     graphData.Clear();
+            //     
+            // }
+            // else
+            // { 
+            // graphData.Add(graph.positions[graph.ndgraph.FocusVert]);
+            // }
+            WriteToCSV();
+            
+            
             
 
         }
@@ -78,23 +93,33 @@ namespace C2M2.Utils
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             
-            if (graphData.Count > 0)
+            // if (graphData.Count > 0)
+            // {
+            //     
+            //     TextWriter tw = new StreamWriter(filename, true);
+            //     tw.Write("\n"+graphData[0].x+","+graphData[0].y);
+            //     for (int i = 0; i < 1000; i++)
+            //     {
+            //         tw.Write(","+graphData[0].y);
+            //     }
+            //
+            //     tw.Close();
+            // }
+            if (cellData.Length > 0)
             {
-                TextWriter tw = new StreamWriter(filename, false);
-                tw.WriteLine("Time (ms) , Voltage (mV)");
-                tw.Close();
-                tw = new StreamWriter(filename, true);
-                for (int i = 0; i < graphData.Count; i++)
+                
+                TextWriter tw = new StreamWriter(filename, true);
+                tw.Write("\n"+sim.GetSimulationTime());
+                for (int i = 0; i < cellData.Length; i++)
                 {
-                    tw.WriteLine(graphData[i].x+","+graphData[i].y);
+                    tw.Write(","+cellData[i]*sim.unitScaler);
                 }
-
+            
                 tw.Close();
             }
+            
             stopWatch.Stop();
             
-
-            // Format and display the TimeSpan value.
             long elapsedMilliseconds = stopWatch.ElapsedMilliseconds;
 
             string elapsedTime = $"{elapsedMilliseconds} ms";

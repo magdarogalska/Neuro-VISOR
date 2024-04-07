@@ -8,7 +8,10 @@ using UnityEngine;
 
 public class NDGraph : NDInteractables
 {
-    public NDGraphManager GraphManager { get { return simulation.graphManager; } }
+    public NDGraphManager GraphManager
+    {
+        get { return simulation.graphManager; }
+    }
 
     private GrabRescaler grabRescaler;
     public NDLineGraph ndlinegraph;
@@ -19,7 +22,7 @@ public class NDGraph : NDInteractables
     {
         grabRescaler = GetComponent<GrabRescaler>();
         ndlinegraph = GetComponent<NDLineGraph>();
-        // csv = ndlinegraph.GetComponent<CSVWriter>();
+        
     }
 
     // Update is called once per frame
@@ -33,10 +36,10 @@ public class NDGraph : NDInteractables
 
     private void OnDestroy()
     {
-        Debug.Log("Inside on destroy");
+        
         if (ndlinegraph.csv != null)
         {
-            Debug.Log("Should be saved");
+            
             ndlinegraph.csv.WriteToCSV();
         }
 
