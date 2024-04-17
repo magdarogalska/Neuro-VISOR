@@ -22,15 +22,11 @@ namespace C2M2.Utils
         public double[] cellData;
         private SparseSolverTestv1 sim;
         private GameManager gm = null;
+        private float sTime;
         void Awake()
         {
             graph = GetComponentInParent<NDLineGraph>();
-            // simul = GetComponentInChildren<NDSimulation>();
-
-
-            // Debug.Log("Neuron count " + Neuron.nodes.Count);
-
-
+            
 
         }
         
@@ -42,7 +38,10 @@ namespace C2M2.Utils
             DateTime date = DateTime.Now;
             String formatted = date.ToString("MM-dd-yyyy-hh-mm-ss");
             String fname = "/neuro_visor_recording_"+formatted+".csv";
-            filename = Application.dataPath + fname;
+            String path = Application.dataPath + "/";
+            if (!Directory.Exists(path + "CSV_Files")) Directory.CreateDirectory(path + "CSV_Files");
+            path += "CSV_Files/";
+            filename = path + fname;
             TextWriter tw = new StreamWriter(filename, false);
             
             tw.Write("Time (ms)");
@@ -51,11 +50,11 @@ namespace C2M2.Utils
                 tw.Write(", Vert["+i+"]");
             }
             tw.Close();
-            String txt_name = "/neuro_visor_recording_"+formatted+".txt";
-            String txtname = Application.dataPath + txt_name;
-            tw = new StreamWriter(txtname, false);
-            tw.WriteLine("Start of the recording: ");
-            tw.Close();
+            //String txt_name = "/neuro_visor_recording_"+formatted+".txt";
+            //String txtname = Application.dataPath + txt_name;
+            //tw = new StreamWriter(txtname, false);
+            //tw.WriteLine("Start of the recording: ");
+            //tw.Close();
             //write start and end time of the recording, start and end times of the neurons
             //in the room?, the information from the indices, the neuron and vertex indices
             //from which the data is saved from
@@ -68,7 +67,7 @@ namespace C2M2.Utils
         {
             UnityEngine.Debug.Log("Graphing vertex: "+graph.ndgraph.FocusVert);
             cellData = sim.Get1DValues();
-            
+            sTime = sim.GetSimulationTime()*1000;
             // if (graphData.Count > 500)
             // {
             //     WriteToCSV();
@@ -109,7 +108,7 @@ namespace C2M2.Utils
             {
                 
                 TextWriter tw = new StreamWriter(filename, true);
-                tw.Write("\n"+sim.GetSimulationTime());
+                tw.Write("\n"+sTime);
                 for (int i = 0; i < cellData.Length; i++)
                 {
                     tw.Write(","+cellData[i]*sim.unitScaler);

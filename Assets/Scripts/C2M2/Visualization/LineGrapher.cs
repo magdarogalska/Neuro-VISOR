@@ -227,7 +227,7 @@ namespace C2M2.Visualization
             InitOutline();
             InitInfoPanelButton();
             MaxSamples = maxSamples;
-            // csv = GetComponent<CSVWriter>();
+            
             
 
             void InitInfoPanel()
