@@ -7,13 +7,13 @@ using C2M2.Utils;
 namespace C2M2.NeuronalDynamics.Interaction.UI
 {
     [RequireComponent(typeof(NDGraph))]
-    [RequireComponent(typeof(CSVWriter))]
+    
     
     public class NDLineGraph : LineGrapher
     {
 
         public NDGraph ndgraph;
-        public CSVWriter csv;
+        
         public NDSimulation Sim
         {
             get
@@ -30,7 +30,7 @@ namespace C2M2.NeuronalDynamics.Interaction.UI
         private void Awake()
         {
             ndgraph = GetComponent<NDGraph>();
-            csv = GetComponentInChildren<CSVWriter>();
+            
             
         }
 

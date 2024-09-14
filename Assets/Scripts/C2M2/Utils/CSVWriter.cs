@@ -17,15 +17,25 @@ namespace C2M2.Utils
     public class CSVWriter : MonoBehaviour
     {
         private string filename;
-        public List<Vector3> graphData;
-        public NDLineGraph graph;
+        public NDLineGraph graph = null;
         public double[] cellData;
         private SparseSolverTestv1 sim;
         private GameManager gm = null;
         private float sTime;
+        public bool single = false;
         void Awake()
-        {
-            graph = GetComponentInParent<NDLineGraph>();
+        {   
+            gm = GameManager.instance;
+            sim = (SparseSolverTestv1)gm.activeSims[0];
+            if (single)
+            {
+                //get graph
+                UnityEngine.Debug.Log("Got the graph");
+                graph = GetComponent<NDLineGraph>();
+
+
+            }
+            
             
 
         }
@@ -45,19 +55,20 @@ namespace C2M2.Utils
             TextWriter tw = new StreamWriter(filename, false);
             
             tw.Write("Time (ms)");
-            for (int i = 0; i < size; i++)
+            if (single == false)
             {
-                tw.Write(", Vert["+i+"]");
+                for (int i = 0; i < size; i++)
+                {
+                    tw.Write(", Vert["+i+"]");
+                }
             }
+            else
+            {
+                tw.Write(", Vert["+graph.ndgraph.FocusVert+"]");
+            }
+            
             tw.Close();
-            //String txt_name = "/neuro_visor_recording_"+formatted+".txt";
-            //String txtname = Application.dataPath + txt_name;
-            //tw = new StreamWriter(txtname, false);
-            //tw.WriteLine("Start of the recording: ");
-            //tw.Close();
-            //write start and end time of the recording, start and end times of the neurons
-            //in the room?, the information from the indices, the neuron and vertex indices
-            //from which the data is saved from
+            
 
 
 
@@ -65,19 +76,10 @@ namespace C2M2.Utils
 
         private void Update()
         {
-            UnityEngine.Debug.Log("Graphing vertex: "+graph.ndgraph.FocusVert);
+            
             cellData = sim.Get1DValues();
             sTime = sim.GetSimulationTime()*1000;
-            // if (graphData.Count > 500)
-            // {
-            //     WriteToCSV();
-            //     graphData.Clear();
-            //     
-            // }
-            // else
-            // { 
-            // graphData.Add(graph.positions[graph.ndgraph.FocusVert]);
-            // }
+            
             WriteToCSV();
             
             
@@ -92,19 +94,14 @@ namespace C2M2.Utils
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             
-            // if (graphData.Count > 0)
-            // {
-            //     
-            //     TextWriter tw = new StreamWriter(filename, true);
-            //     tw.Write("\n"+graphData[0].x+","+graphData[0].y);
-            //     for (int i = 0; i < 1000; i++)
-            //     {
-            //         tw.Write(","+graphData[0].y);
-            //     }
-            //
-            //     tw.Close();
-            // }
-            if (cellData.Length > 0)
+            
+            if (single)
+            {
+                TextWriter tw = new StreamWriter(filename, true);
+                tw.Write("\n"+sTime);
+                tw.Write(","+cellData[graph.ndgraph.FocusVert]*sim.unitScaler);
+            }
+            else if (cellData.Length > 0)
             {
                 
                 TextWriter tw = new StreamWriter(filename, true);
@@ -117,12 +114,13 @@ namespace C2M2.Utils
                 tw.Close();
             }
             
+            
             stopWatch.Stop();
             
             long elapsedMilliseconds = stopWatch.ElapsedMilliseconds;
-
+            
             string elapsedTime = $"{elapsedMilliseconds} ms";
-
+            
             
             UnityEngine.Debug.Log("Writing to CSV RunTime: " + elapsedTime);
             

@@ -20,7 +20,7 @@ namespace C2M2.Visualization
         public RectTransform infoPanel = null;
         public RectTransform infoPanelButton = null;
         private LineRenderer outline;
-        private CSVWriter csv;
+        
         
         public LineRenderer Outline
         {

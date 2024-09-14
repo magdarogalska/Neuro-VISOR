@@ -37,11 +37,6 @@ public class NDGraph : NDInteractables
     private void OnDestroy()
     {
         
-        if (ndlinegraph.csv != null)
-        {
-            
-            ndlinegraph.csv.WriteToCSV();
-        }
 
         GraphManager.graphs.Remove(this);
         
