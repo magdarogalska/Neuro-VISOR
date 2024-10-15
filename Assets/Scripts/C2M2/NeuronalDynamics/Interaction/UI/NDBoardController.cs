@@ -21,7 +21,8 @@ namespace C2M2.NeuronalDynamics.Interaction.UI
 
         public GameObject defaultBackground;
         public GameObject minimizedBackground;
-        private CSVWriter csv;
+
+        public CSVWriter csv = null;
         //delete buttons
         public GameObject SaveButton;
         public GameObject StopButton;
@@ -153,7 +154,10 @@ namespace C2M2.NeuronalDynamics.Interaction.UI
 
         public void StartCSV(bool single)
         {   //restrict user from saving multiple csv files, disable button after clicking
+            
             csv = GameManager.instance.activeSims[0].gameObject.AddComponent<CSVWriter>();
+            NDSimulation sim = (NDSimulation)GameManager.instance.activeSims[0];
+            sim.csv = csv;
             csv.single = single;
             
             Debug.Log("Button Clicked!");
@@ -161,6 +165,8 @@ namespace C2M2.NeuronalDynamics.Interaction.UI
         public void StopCSV()
         {
             Destroy(csv);
+            NDSimulation sim = (NDSimulation)GameManager.instance.activeSims[0];
+            sim.csv = null;
             Debug.Log("Stop button Clicked!");
         }
 

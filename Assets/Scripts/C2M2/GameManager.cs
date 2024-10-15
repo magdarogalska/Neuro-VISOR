@@ -58,7 +58,7 @@ namespace C2M2
         public GameObject synapseManagerPrefab = null;
 
         public GameObject graphManagerPrefab = null;
-
+        public GameObject writerManagerPrefab = null;
         
 
         /// <summary>

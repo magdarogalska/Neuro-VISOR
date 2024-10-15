@@ -82,6 +82,7 @@ namespace C2M2.NeuronalDynamics.Simulation {
 
         public GameObject controlPanel = null;
 
+        public CSVWriter csv = null;
         // Need mesh options for each refinement, diameter level
         [Tooltip("Name of the vrn file within Assets/StreamingAssets/NeuronalDynamics/Geometries")]
         public string vrnFileName = "test.vrn";
@@ -316,6 +317,11 @@ namespace C2M2.NeuronalDynamics.Simulation {
                 
             }
 
+            if (csv != null)
+            {
+                csv.WriteToCSV(1000*GetSimulationTime(), Get1DValues());
+            }
+
             return scalars3D.ToFloat();
         }
 
@@ -424,6 +430,8 @@ namespace C2M2.NeuronalDynamics.Simulation {
                     Destroy(controlPanel);
                     return;
                 }
+
+                csv = controller.csv;
                 controller.MinimizeBoard(false);
                 
                 

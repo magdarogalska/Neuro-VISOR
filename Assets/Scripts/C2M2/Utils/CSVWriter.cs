@@ -18,10 +18,10 @@ namespace C2M2.Utils
     {
         private string filename;
         public NDLineGraph graph = null;
-        public double[] cellData;
+        // public double[] cellData;
         private SparseSolverTestv1 sim;
         private GameManager gm = null;
-        private float sTime;
+        // private float sTime;
         public bool single = false;
         private int numRows=0;
         private Stopwatch stopwatch;
@@ -69,23 +69,23 @@ namespace C2M2.Utils
 
         }
 
-        private void Update()
-        {
-            stopwatch.Restart();
-            cellData = sim.Get1DValues();
-            sTime = sim.GetSimulationTime()*1000;
-            stopwatch.Stop();
-            elapsed = stopwatch.ElapsedMilliseconds;
-            WriteToCSV();
-            
-            
-            
-
-        }
+        // private void Update()
+        // {
+        //     stopwatch.Restart();
+        //     cellData = sim.Get1DValues();
+        //     sTime = sim.GetSimulationTime()*1000;
+        //     stopwatch.Stop();
+        //     elapsed = stopwatch.ElapsedMilliseconds;
+        //     WriteToCSV();
+        //     
+        //     
+        //     
+        //
+        // }
         
         
 
-        public void WriteToCSV()
+        public void WriteToCSV(float sTime, double [] cellData)
         {
             Stopwatch stopWatch = new Stopwatch();
             long elapsedMilliseconds = 0;
