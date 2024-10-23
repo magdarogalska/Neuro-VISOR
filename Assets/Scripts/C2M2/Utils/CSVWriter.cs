@@ -98,7 +98,7 @@ namespace C2M2.Utils
             
             
             //100 rows * 100 vertices
-            if (cellData.Length!=0 & numRows<=1)
+            if (cellData.Length!=0 & numRows<60*50)
             {
                 numRows++;
                 
