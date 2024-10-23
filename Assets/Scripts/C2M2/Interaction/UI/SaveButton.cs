@@ -19,15 +19,18 @@ namespace C2M2.Interaction.UI
         }
         public void StartCSV(bool single)
         {   //restrict user from saving multiple csv files, disable button after clicking
-            csv = sim.graphManager.graphs[0].gameObject.AddComponent<CSVWriter>();
+            csv = GameManager.instance.activeSims[0].gameObject.AddComponent<CSVWriter>();
+            NDSimulation sim = (NDSimulation)GameManager.instance.activeSims[0];
+            sim.csv = csv;
             csv.single = single;
             
-            Debug.Log("Button Clicked!");
+            
         }
         public void StopCSV()
         {
             Destroy(csv);
-            Debug.Log("Stop button Clicked!");
+            NDSimulation sim = (NDSimulation)GameManager.instance.activeSims[0];
+            sim.csv = null;
         }
     }
 

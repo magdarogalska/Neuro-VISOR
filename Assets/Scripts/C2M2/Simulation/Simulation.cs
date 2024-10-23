@@ -159,6 +159,11 @@ namespace C2M2.Simulation
         protected virtual void OnStart() { }
         protected virtual void OnUpdate() { }
 
+        protected virtual async void WriteCSV()
+        {
+            
+        }
+
         protected void OnDestroy()
         {
             StopCoroutine("updateVisulizationStep");
@@ -203,7 +208,7 @@ namespace C2M2.Simulation
                     solveStepSampler.End();
 
                     PostSolveStep(curentTimeStep);
-                    
+                    WriteCSV();
                     curentTimeStep++;
                 }
                 

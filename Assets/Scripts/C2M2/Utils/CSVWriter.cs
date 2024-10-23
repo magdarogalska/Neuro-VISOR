@@ -26,21 +26,25 @@ namespace C2M2.Utils
         private int numRows=0;
         private Stopwatch stopwatch;
         private long elapsed;
-        private int times = 1;
+        private int times = 10;
         private float wtime;
         private float utime;
-        void Awake()
+        private long elapsedMilliseconds;
+
+        private bool append = false;
+        // void Awake()
+        // {   
+        //     gm = GameManager.instance;
+        //     sim = (SparseSolverTestv1)gm.activeSims[0];
+        //     
+        // }
+        
+        //Start is called on the frame when a script is enabled just before any of the Update methods are called the first time. This function can be a coroutine.
+        public void Start()
         {   
             gm = GameManager.instance;
             sim = (SparseSolverTestv1)gm.activeSims[0];
-            
-        }
-        
-        //Start is called on the frame when a script is enabled just before any of the Update methods are called the first time. This function can be a coroutine.
-        private void Start()
-        {   
             int size = sim.Neuron.nodes.Count;
-            
             DateTime date = DateTime.Now;
             String formatted = date.ToString("MM-dd-yyyy-hh-mm-ss");
             String fname = "/neuro_visor_recording_"+formatted+".csv";
@@ -48,19 +52,20 @@ namespace C2M2.Utils
             if (!Directory.Exists(path + "CSV_Files")) Directory.CreateDirectory(path + "CSV_Files");
             path += "CSV_Files/";
             filename = path + fname;
-            TextWriter tw = new StreamWriter(filename, false);
+            // TextWriter tw = new StreamWriter(filename, false);
             
-            tw.Write("Time (ms)");
+            // tw.Write("Time (ms)");
+            //
+            // for (int i = 0; i < 800*times; i++)
+            // { tw.Write(", Vert["+i+"]");
+            // }
+            // tw.Write(", Update ms");
+            // tw.Write(", Write ms");
             
-            for (int i = 0; i < size*times; i++)
-            { tw.Write(", Vert["+i+"]");
-            }
-            tw.Write(", Update ms");
-            tw.Write(", Write ms");
             
-            
-            tw.Close();
+            // tw.Close();
             stopwatch = new Stopwatch();
+            
             
             
 
@@ -88,40 +93,42 @@ namespace C2M2.Utils
         public void WriteToCSV(float sTime, double [] cellData)
         {
             Stopwatch stopWatch = new Stopwatch();
-            long elapsedMilliseconds = 0;
+            
             stopWatch.Restart();
             
             
-            
-            if (cellData.Length > 0 && numRows<1000)
+            //100 rows * 100 vertices
+            if (cellData.Length!=0 & numRows<=1)
             {
                 numRows++;
                 
-                TextWriter tw = new StreamWriter(filename, true);
-                tw.Write("\n"+sTime);
+                TextWriter tw = new StreamWriter(filename, append);
+                tw.Write(+sTime);
                 for (int j = 1; j <= times;j++)
                 {
 
 
-                    for (int i = 0; i < cellData.Length; i++)
+                    for (int i = 0; i < 600; i++)
                     {
                         tw.Write("," + cellData[i] * sim.unitScaler);
                     }
                 }
+                tw.Write("\n");
 
 
                 stopWatch.Stop();
-                tw.Write((","+elapsed));
+                // tw.Write((","+elapsed));
                 utime += elapsed;
                 elapsedMilliseconds = stopWatch.ElapsedMilliseconds;
-                tw.Write(","+elapsedMilliseconds);
+                // tw.Write(","+elapsedMilliseconds);
                 wtime += elapsedMilliseconds;
                 tw.Close();
+                append = true;
             }
             else
             {
-                UnityEngine.Debug.Log("Update avg: " + (utime/1000));
-                UnityEngine.Debug.Log("Write avg: " + (wtime/1000));
+                UnityEngine.Debug.Log("Update avg: " + (utime/100));
+                UnityEngine.Debug.Log("Write avg: " + (wtime/100));
             }
             
             

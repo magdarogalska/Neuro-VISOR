@@ -30,6 +30,7 @@ namespace C2M2.NeuronalDynamics.Simulation {
 
         public new NDSimulationManager Manager { get { return GameManager.instance.simulationManager; } }
         private double visualInflation = 1;
+        public CSVWriter csv = null;
         public double VisualInflation
         {
             get { return visualInflation; }
@@ -82,7 +83,7 @@ namespace C2M2.NeuronalDynamics.Simulation {
 
         public GameObject controlPanel = null;
 
-        public CSVWriter csv = null;
+        
         // Need mesh options for each refinement, diameter level
         [Tooltip("Name of the vrn file within Assets/StreamingAssets/NeuronalDynamics/Geometries")]
         public string vrnFileName = "test.vrn";
@@ -256,6 +257,9 @@ namespace C2M2.NeuronalDynamics.Simulation {
                     Set1DValues(raycastHits);
                 }
             }
+            
+            
+            
         }
 
         internal abstract void SetOutputValues();
@@ -317,13 +321,12 @@ namespace C2M2.NeuronalDynamics.Simulation {
                 
             }
 
-            if (csv != null)
-            {
-                csv.WriteToCSV(1000*GetSimulationTime(), Get1DValues());
-            }
+            
 
             return scalars3D.ToFloat();
         }
+        
+       
 
         /// <summary>
         /// Translate 3D vertex values to 1D values, and pass them downwards for interaction
@@ -367,6 +370,15 @@ namespace C2M2.NeuronalDynamics.Simulation {
         /// </summary>
         /// <returns></returns>
         public abstract double[] Get1DValues ();
+        protected override async void WriteCSV()
+        {
+            if (csv != null)
+            {
+
+
+                csv.WriteToCSV(1000 * GetSimulationTime(), Get1DValues());
+            }
+        }
         protected override void OnAwakePre()
         {
             UpdateGrid1D();
@@ -431,7 +443,7 @@ namespace C2M2.NeuronalDynamics.Simulation {
                     return;
                 }
 
-                csv = controller.csv;
+                
                 controller.MinimizeBoard(false);
                 
                 
@@ -520,6 +532,8 @@ namespace C2M2.NeuronalDynamics.Simulation {
             this.v2 = v2;
             this.lambda = lambda;
         }
+
+        
         public override string ToString()
         {
             return "v1: " + v1 + "\nv2: " + v2 + "\nlambda: " + lambda;
