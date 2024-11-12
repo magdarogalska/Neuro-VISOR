@@ -21,10 +21,6 @@ namespace C2M2.Utils
         private SparseSolverTestv1 sim;
         private GameManager gm = null;
         private long elapsed;
-        private int times = 1;
-        private float wtime;
-        private float ctime;
-        private long elapsedMilliseconds;
         private int size;
 
         private bool append = false;
@@ -43,40 +39,24 @@ namespace C2M2.Utils
             csvFilename = path + fname + ".csv";
             append = false;
             
-            
-
-
-
 
         }
 
         public void WriteToCSV(float sTime, double [] cellData, double [] M, double [] H, double []N)
         {
-            Stopwatch stopWatch = new Stopwatch();
-            
-            stopWatch.Restart();
-
-
 
             if (cellData.Length != 0)
             {
 
-
                 BinaryWriter bw = new BinaryWriter(File.Open(filename, append ? FileMode.Append : FileMode.Create));
 
-
                 bw.Write(sTime);
-
-
-                for (int j = 1; j <= times; j++)
-                {
+                
                     for (int i = 0; i < size; i++)
                     {
                         bw.Write(cellData[i] * sim.unitScaler);
                     }
-                }
-
-
+                    
                 for (int i = 0; i < size; i++)
                 {
                     bw.Write(M[i]);
@@ -88,21 +68,16 @@ namespace C2M2.Utils
                     bw.Write(H[i]);
                 }
 
-
                 for (int i = 0; i < size; i++)
                 {
                     bw.Write(N[i]);
                 }
-
-
-                stopWatch.Stop();
                 
                 bw.Close();
                 append = true;
 
             }
-
-
+            
         }
         public void ConvertToCSV()
         {
@@ -121,15 +96,12 @@ namespace C2M2.Utils
                     float sTime = reader.ReadSingle();
                     csvWriter.Write(sTime + ",");
 
-             
                     for (int i = 0; i < size; i++)
                     {
                         double cellValue = reader.ReadDouble();
                         csvWriter.Write(cellValue + ",");
                     }
                     csvWriter.WriteLine();
-
-         
                     csvWriter.Write("M,");
                     for (int i = 0; i < size; i++)
                     {
@@ -137,8 +109,6 @@ namespace C2M2.Utils
                         csvWriter.Write(mValue + (i < size-1 ? "," : ""));
                     }
                     csvWriter.WriteLine();
-
-              
                     csvWriter.Write("H,");
                     for (int i = 0; i < size; i++)
                     {
@@ -147,7 +117,6 @@ namespace C2M2.Utils
                     }
 
                     csvWriter.WriteLine();
-                    
                     csvWriter.Write("N,");
                     for (int i = 0; i < size; i++)
                     {
