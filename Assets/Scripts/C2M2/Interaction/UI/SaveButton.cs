@@ -15,18 +15,15 @@ namespace C2M2.Interaction.UI
         private void Start()
         {
             gm = GameManager.instance;
-            // sim = (SparseSolverTestv1)gm.activeSims[0];
+            
         }
-        public void StartCSV(bool single)
+        public void StartCSV()
         {   //restrict user from saving multiple csv files, disable button after clicking
-            UnityEngine.Debug.Log("In the Write");
+            
             csv = GameManager.instance.activeSims[0].gameObject.AddComponent<CSVWriter>();
             sim = (NDSimulation)GameManager.instance.activeSims[0];
             sim.solver = (SparseSolverTestv1)gm.activeSims[0];
             sim.csv = csv;
-            csv.single = single;
-            
-            
         }
         public void StopCSV()
         {
