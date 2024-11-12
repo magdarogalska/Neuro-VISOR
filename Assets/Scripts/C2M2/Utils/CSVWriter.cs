@@ -17,6 +17,7 @@ namespace C2M2.Utils
     public class CSVWriter : MonoBehaviour
     {
         private string filename;
+        private string csvFilename;
         public NDLineGraph graph = null;
         // public double[] cellData;
         private SparseSolverTestv1 sim;
@@ -26,10 +27,11 @@ namespace C2M2.Utils
         private int numRows=0;
         private Stopwatch stopwatch;
         private long elapsed;
-        private int times = 10;
+        private int times = 1;
         private float wtime;
-        private float utime;
+        private float ctime;
         private long elapsedMilliseconds;
+        private int size;
 
         private bool append = false;
         // void Awake()
@@ -44,28 +46,30 @@ namespace C2M2.Utils
         {   
             gm = GameManager.instance;
             sim = (SparseSolverTestv1)gm.activeSims[0];
-            int size = sim.Neuron.nodes.Count;
+            size = sim.Neuron.nodes.Count;
+            size = (size / 26) * 100;
+            UnityEngine.Debug.Log("File size: " + size);
             DateTime date = DateTime.Now;
             String formatted = date.ToString("MM-dd-yyyy-hh-mm-ss");
-            String fname = "/neuro_visor_recording_"+formatted+".csv";
+            String fname = "/neuro_visor_recording_"+formatted;
             String path = Application.dataPath + "/";
-            if (!Directory.Exists(path + "CSV_Files")) Directory.CreateDirectory(path + "CSV_Files");
-            path += "CSV_Files/";
-            filename = path + fname;
-            // TextWriter tw = new StreamWriter(filename, false);
-            
-            // tw.Write("Time (ms)");
+            if (!Directory.Exists(path + "Binary_Files")) Directory.CreateDirectory(path + "Binary_Files");
+            path += "Binary_Files/";
+            filename = path + fname+".bin";
+            csvFilename = path + fname + ".csv";
+            // BinaryWriter bw = new BinaryWriter(File.Open(filename, append ? FileMode.Append : FileMode.Create));
             //
-            // for (int i = 0; i < 800*times; i++)
-            // { tw.Write(", Vert["+i+"]");
+            // //TextWriter tw = new StreamWriter(filename, false);
+            // bw.Write("Gating Variables,");
+            // bw.Write("Time (ms)");
+            // for (int i = 0; i < 110; i++)
+            // { bw.Write(", Vert["+i+"]");
             // }
-            // tw.Write(", Update ms");
-            // tw.Write(", Write ms");
-            
-            
-            // tw.Close();
+            //
+            //
+            // bw.Close();
             stopwatch = new Stopwatch();
-            
+            append = false;
             
             
 
@@ -74,74 +78,131 @@ namespace C2M2.Utils
 
         }
 
-        // private void Update()
-        // {
-        //     stopwatch.Restart();
-        //     cellData = sim.Get1DValues();
-        //     sTime = sim.GetSimulationTime()*1000;
-        //     stopwatch.Stop();
-        //     elapsed = stopwatch.ElapsedMilliseconds;
-        //     WriteToCSV();
-        //     
-        //     
-        //     
-        //
-        // }
-        
-        
+        public String getFileName()
+        {
+            return filename;
+        }
 
-        public void WriteToCSV(float sTime, double [] cellData)
+        public void WriteToCSV(float sTime, double [] cellData, double [] M, double [] H, double []N)
         {
             Stopwatch stopWatch = new Stopwatch();
             
             stopWatch.Restart();
             
             
-            //100 rows * 100 vertices
+         
             if (cellData.Length!=0 & numRows<60*50)
             {
                 numRows++;
                 
-                TextWriter tw = new StreamWriter(filename, append);
-                tw.Write(+sTime);
-                for (int j = 1; j <= times;j++)
-                {
+                BinaryWriter bw = new BinaryWriter(File.Open(filename, append ? FileMode.Append : FileMode.Create));
+                
+              
+                    bw.Write(sTime);
 
-
-                    for (int i = 0; i < 600; i++)
+           
+                    for (int j = 1; j <= times; j++)
                     {
-                        tw.Write("," + cellData[i] * sim.unitScaler);
+                        for (int i = 0; i < size; i++)
+                        {
+                            bw.Write(cellData[i%size] * sim.unitScaler);
+                        }
                     }
-                }
-                tw.Write("\n");
 
+           
+                    for (int i = 0; i < size; i++)
+                    {
+                        bw.Write(M[i%size]);
+                    }
+
+         
+                    for (int i = 0; i < size; i++)
+                    {
+                        bw.Write(H[i%size]);
+                    }
+
+          
+                    for (int i = 0; i < size; i++)
+                    {
+                        bw.Write(N[i%size]);
+                    }
+                
 
                 stopWatch.Stop();
                 // tw.Write((","+elapsed));
-                utime += elapsed;
+                
                 elapsedMilliseconds = stopWatch.ElapsedMilliseconds;
                 // tw.Write(","+elapsedMilliseconds);
                 wtime += elapsedMilliseconds;
-                tw.Close();
+                bw.Close();
                 append = true;
+
             }
             else
             {
-                UnityEngine.Debug.Log("Update avg: " + (utime/100));
-                UnityEngine.Debug.Log("Write avg: " + (wtime/100));
+                //UnityEngine.Debug.Log("Update avg: " + (utime/100)+ " M: " + M.Length+ " H " + H.Length+ " N: " + N.Length);
+                UnityEngine.Debug.Log("Write avg: " + (wtime));
             }
             
             
-            
-            
-            
-            
-            // string elapsedTime = $"{elapsedMilliseconds} ms";
-            //
-            //
-            // UnityEngine.Debug.Log("Writing to CSV RunTime: " + elapsedTime);
-            
-            
+        }
+        public void ConvertToCSV()
+        {
+            stopwatch.Restart();
+            using (BinaryReader reader = new BinaryReader(File.Open(filename, FileMode.Open)))
+            using (StreamWriter csvWriter = new StreamWriter(csvFilename))
+            {
+
+                csvWriter.Write("Time (ms),");
+                csvWriter.Write("Gating Variables");
+                for (int i = 0; i < size; i++) csvWriter.Write($", Vert[{i}]");
+                csvWriter.WriteLine();
+
+                while (reader.BaseStream.Position < reader.BaseStream.Length)
+                {
+        
+                    float sTime = reader.ReadSingle();
+                    csvWriter.Write(sTime + ",");
+
+             
+                    for (int i = 0; i < size; i++)
+                    {
+                        double cellValue = reader.ReadDouble();
+                        csvWriter.Write(cellValue + ",");
+                    }
+                    csvWriter.WriteLine();
+
+         
+                    csvWriter.Write("M,");
+                    for (int i = 0; i < size; i++)
+                    {
+                        double mValue = reader.ReadDouble();
+                        csvWriter.Write(mValue + (i < size-1 ? "," : ""));
+                    }
+                    csvWriter.WriteLine();
+
+              
+                    csvWriter.Write("H,");
+                    for (int i = 0; i < size; i++)
+                    {
+                        double hValue = reader.ReadDouble();
+                        csvWriter.Write(hValue + (i < size-1 ? "," : ""));
+                    }
+
+                    csvWriter.WriteLine();
+                    
+                    csvWriter.Write("N,");
+                    for (int i = 0; i < size; i++)
+                    {
+                        double nValue = reader.ReadDouble();
+                        csvWriter.Write(nValue + (i < size-1 ? "," : ""));
+                    }
+                    csvWriter.WriteLine();
+                }
+            }
+
+            ctime = stopwatch.ElapsedMilliseconds;
+            UnityEngine.Debug.Log("Conversion time: "+ ctime);
         }
     }
 

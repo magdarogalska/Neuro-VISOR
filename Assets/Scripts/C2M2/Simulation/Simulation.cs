@@ -219,11 +219,9 @@ namespace C2M2.Simulation
                     DateTime currentTime = DateTime.Now;
                     
                     double elapsedSinceLastWrite = (currentTime - lastWriteTime).TotalSeconds;
-                    if (elapsedSinceLastWrite >= writeInterval)
-                    {
-                        
+                    if (elapsedSinceLastWrite >= writeInterval){
                         WriteCSV();
-                        lastWriteTime = currentTime;
+                    lastWriteTime = currentTime;
                     }
                     
                     
