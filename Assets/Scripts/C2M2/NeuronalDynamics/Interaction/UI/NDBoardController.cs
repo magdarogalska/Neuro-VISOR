@@ -154,7 +154,6 @@ namespace C2M2.NeuronalDynamics.Interaction.UI
         public void StartCSV(bool single)
         {   //restrict user from saving multiple csv files, disable button after clicking
             csv = GameManager.instance.activeSims[0].gameObject.AddComponent<CSVWriter>();
-            csv.Start();
             NDSimulation sim = (NDSimulation)GameManager.instance.activeSims[0];
             sim.solver = (SparseSolverTestv1)GameManager.instance.activeSims[0];
             sim.csv = csv;
@@ -162,10 +161,11 @@ namespace C2M2.NeuronalDynamics.Interaction.UI
             
         }
         public void StopCSV()
-        {   csv.ConvertToCSV();
-            Destroy(csv);
+        {   
             NDSimulation sim = (NDSimulation)GameManager.instance.activeSims[0];
-            sim.csv = null;
+            sim.convert = true;
+            
+            
         }
 
         public void MinimizeToggle()

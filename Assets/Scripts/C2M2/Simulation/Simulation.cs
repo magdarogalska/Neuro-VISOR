@@ -164,6 +164,10 @@ namespace C2M2.Simulation
             
         }
 
+        protected virtual void StopCSV()
+        {
+        }
+
         protected void OnDestroy()
         {
             StopCoroutine("updateVisulizationStep");
@@ -174,12 +178,9 @@ namespace C2M2.Simulation
         public int curentTimeStep = -1;
         public double timeStep = 0.008 * 1e-3;
         public double endTime = 1.0;
-        private static int writeFrequency = 50;
-        private float writeInterval = 1.0f / writeFrequency;
-        private float accumulatedTime = 0.0f;
-        private DateTime lastWriteTime;
+        
         private float timeChange;
-        private double testTime = 60.0;
+        
         public int nT => (int)(endTime / timeStep);
 
         /// <summary>
@@ -215,14 +216,9 @@ namespace C2M2.Simulation
 
                     PostSolveStep(curentTimeStep);
                     
+                    WriteCSV();
+                    StopCSV();
                     
-                    DateTime currentTime = DateTime.Now;
-                    
-                    double elapsedSinceLastWrite = (currentTime - lastWriteTime).TotalSeconds;
-                    if (elapsedSinceLastWrite >= writeInterval){
-                        WriteCSV();
-                    lastWriteTime = currentTime;
-                    }
                     
                     
 

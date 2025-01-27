@@ -18,11 +18,8 @@ namespace C2M2.Utils
     {
         private string filename;
         private string csvFilename;
-        public NDLineGraph graph = null;
-        // public double[] cellData;
         private SparseSolverTestv1 sim;
         private GameManager gm = null;
-        // private float sTime;
         public bool single = false;
         private int numRows=0;
         private Stopwatch stopwatch;
@@ -34,12 +31,7 @@ namespace C2M2.Utils
         private int size;
 
         private bool append = false;
-        // void Awake()
-        // {   
-        //     gm = GameManager.instance;
-        //     sim = (SparseSolverTestv1)gm.activeSims[0];
-        //     
-        // }
+     
         
         //Start is called on the frame when a script is enabled just before any of the Update methods are called the first time. This function can be a coroutine.
         public void Start()
@@ -47,27 +39,16 @@ namespace C2M2.Utils
             gm = GameManager.instance;
             sim = (SparseSolverTestv1)gm.activeSims[0];
             size = sim.Neuron.nodes.Count;
-            size = (size / 26) * 100;
             UnityEngine.Debug.Log("File size: " + size);
             DateTime date = DateTime.Now;
             String formatted = date.ToString("MM-dd-yyyy-hh-mm-ss");
             String fname = "/neuro_visor_recording_"+formatted;
             String path = Application.dataPath + "/";
-            if (!Directory.Exists(path + "Binary_Files")) Directory.CreateDirectory(path + "Binary_Files");
-            path += "Binary_Files/";
+            if (!Directory.Exists(path + "CSV_Files")) Directory.CreateDirectory(path + "CSV_Files");
+            path += "CSV_Files/";
             filename = path + fname+".bin";
             csvFilename = path + fname + ".csv";
-            // BinaryWriter bw = new BinaryWriter(File.Open(filename, append ? FileMode.Append : FileMode.Create));
-            //
-            // //TextWriter tw = new StreamWriter(filename, false);
-            // bw.Write("Gating Variables,");
-            // bw.Write("Time (ms)");
-            // for (int i = 0; i < 110; i++)
-            // { bw.Write(", Vert["+i+"]");
-            // }
-            //
-            //
-            // bw.Close();
+            
             stopwatch = new Stopwatch();
             append = false;
             
@@ -91,7 +72,7 @@ namespace C2M2.Utils
             
             
          
-            if (cellData.Length!=0 & numRows<60*50)
+            if (cellData.Length!=0& numRows<60*50)
             {
                 numRows++;
                 
@@ -105,34 +86,34 @@ namespace C2M2.Utils
                     {
                         for (int i = 0; i < size; i++)
                         {
-                            bw.Write(cellData[i%size] * sim.unitScaler);
+                            bw.Write(cellData[i] * sim.unitScaler);
                         }
                     }
 
            
                     for (int i = 0; i < size; i++)
                     {
-                        bw.Write(M[i%size]);
+                        bw.Write(M[i]);
                     }
 
          
                     for (int i = 0; i < size; i++)
                     {
-                        bw.Write(H[i%size]);
+                        bw.Write(H[i]);
                     }
 
           
                     for (int i = 0; i < size; i++)
                     {
-                        bw.Write(N[i%size]);
+                        bw.Write(N[i]);
                     }
                 
 
                 stopWatch.Stop();
-                // tw.Write((","+elapsed));
+                
                 
                 elapsedMilliseconds = stopWatch.ElapsedMilliseconds;
-                // tw.Write(","+elapsedMilliseconds);
+                
                 wtime += elapsedMilliseconds;
                 bw.Close();
                 append = true;
@@ -141,7 +122,7 @@ namespace C2M2.Utils
             else
             {
                 //UnityEngine.Debug.Log("Update avg: " + (utime/100)+ " M: " + M.Length+ " H " + H.Length+ " N: " + N.Length);
-                UnityEngine.Debug.Log("Write avg: " + (wtime));
+                UnityEngine.Debug.Log("Write time: " + (wtime));
             }
             
             
@@ -149,13 +130,12 @@ namespace C2M2.Utils
         public void ConvertToCSV()
         {
             stopwatch.Restart();
-            using (BinaryReader reader = new BinaryReader(File.Open(filename, FileMode.Open)))
             using (StreamWriter csvWriter = new StreamWriter(csvFilename))
             {
-
+                BinaryReader reader = new BinaryReader(File.Open(filename, FileMode.Open));
                 csvWriter.Write("Time (ms),");
-                csvWriter.Write("Gating Variables");
-                for (int i = 0; i < size; i++) csvWriter.Write($", Vert[{i}]");
+                // csvWriter.Write("Gating Variables");
+                for (int i = 0; i < size; i++) csvWriter.Write($"Vert[{i}],");
                 csvWriter.WriteLine();
 
                 while (reader.BaseStream.Position < reader.BaseStream.Length)
@@ -199,11 +179,16 @@ namespace C2M2.Utils
                     }
                     csvWriter.WriteLine();
                 }
+                reader.Close();
+                csvWriter.Close();
             }
 
             ctime = stopwatch.ElapsedMilliseconds;
             UnityEngine.Debug.Log("Conversion time: "+ ctime);
+            //delete the binary version of the file
+            File.Delete(filename);
         }
+        
     }
 
 }

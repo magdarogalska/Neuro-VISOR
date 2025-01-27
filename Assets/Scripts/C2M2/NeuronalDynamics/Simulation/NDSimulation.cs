@@ -32,6 +32,7 @@ namespace C2M2.NeuronalDynamics.Simulation {
         private double visualInflation = 1;
         public CSVWriter csv = null;
         public SparseSolverTestv1 solver = null;
+        
         public double VisualInflation
         {
             get { return visualInflation; }
@@ -376,11 +377,22 @@ namespace C2M2.NeuronalDynamics.Simulation {
             
             if (csv != null)
             {
-
-                
                 csv.WriteToCSV(1000 * GetSimulationTime(), Get1DValues(), solver.getM(), solver.getH(),solver.getN());
             }
         }
+
+        public bool convert = false;
+
+        protected override async void StopCSV()
+        {
+            if (convert == true)
+            {   convert = false;
+                csv.ConvertToCSV();
+                csv = null;
+
+            }
+        }
+
         protected override void OnAwakePre()
         {
             UpdateGrid1D();
